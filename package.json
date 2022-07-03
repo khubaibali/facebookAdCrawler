@@ -1,0 +1,18 @@
+{
+  "name": "facebookadapplication",
+  "version": "1.0.0",
+  "description": "unique ads identifier",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "owais and khubaib",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^19.0.7"
+  },
+  "dependencies": {
+    "puppeteer": "^15.3.0"
+  }
+}
