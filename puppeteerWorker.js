@@ -1,5 +1,6 @@
 const {parentPort, workerData} = require("worker_threads");
 const puppeteer = require('puppeteer');
+const fetch =require('cross-fetch');
 const filer = require('fs');
 let adsCollection =[]; // All the Ads in This Collection
 let uniqueAds ={};    // Only Ads with distinct body
@@ -17,11 +18,12 @@ let uniqueAds ={};    // Only Ads with distinct body
           temp.forEach((ite)=>{
             ad.push(ite[0])
           })
-          filer.writeFile('./response.txt', JSON.stringify(ad),()=>{
-           console.log('file is respnse')
-          });
-          
+          // filer.writeFile('./response.txt', JSON.stringify(ad),()=>{
+          //  console.log('file is respnse')
+          // });
+         // console.log(adsCollection)
         ad.forEach((item)=>{
+         
           if(!item.snapshot.body){
             return
           }
@@ -32,17 +34,46 @@ let uniqueAds ={};    // Only Ads with distinct body
             return
           }
           if(!uniqueAds[item.snapshot.body.markup.__html]){
-            uniqueAds[item.snapshot.body.markup.__html] = {count:0,sent:false}
+            let imgUrl="No URL"
+            if(item.snapshot.cards.length>0){
+              imgUrl=item.snapshot.cards[0].original_image_url;
+              console.log("imgUrl------>",imgUrl);
+              uniqueAds[item.snapshot.body.markup.__html] = {count:0,sent:false,img:imgUrl}
+            }
+            else{
+            uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,img:imgUrl}}
+           //img:item.snapshot.cards[0].original_image_url
+            // console.log("img--->",item.snapshot.cards)
             return
           }
+
+          if(item.snapshot.cards.length>0){
+            uniqueAds[item.snapshot.body.markup.__html].img=item.snapshot.cards[0].original_image_url;
+          }
             uniqueAds[item.snapshot.body.markup.__html].count = uniqueAds[item.snapshot.body.markup.__html].count +1
-          
-          
+            
+            
+
+           // console.log(item.snapshot.body);
+     
         })
 
-        console.log('total ads ====>', adsCollection.length)
-        console.log("Unique Ads ====>",Object.keys(uniqueAds).length)
-        console.log(uniqueAds)
+        // console.log('total ads ====>', adsCollection.length)
+        // console.log("Unique Ads ====>",Object.keys(uniqueAds).length)
+        for (const key in uniqueAds) {
+         
+
+          if(uniqueAds[key].count>2){
+            addpost({caption:key,url:uniqueAds[key].img});
+          }
+        }
+        // uniqueAds.forEach((elem,index)=>{
+        //   if(elem.count==5){
+              
+        //       uniqueAds.splice(index,1);
+        //   }
+        // })
+        // console.log(uniqueAds)
             
       
         }
@@ -56,7 +87,7 @@ let uniqueAds ={};    // Only Ads with distinct body
     })
     await page.evaluate(() => {
         let elements = document.getElementsByClassName('_8n_3');
-        console.log(elements)
+        //console.log(elements)
         for (let element of elements)
             element.click();
     });
@@ -67,7 +98,7 @@ let uniqueAds ={};    // Only Ads with distinct body
         await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
         await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
         //await page.waitForTimeout(1000);
-        console.log('scroll hit')
+   //     console.log('scroll hit')
     }
 
     //await browser.close();
@@ -92,4 +123,25 @@ async function scrapeItems(
       }
     } catch(e) { }
     return items;
+  }
+
+  function addpost(body) {
+    fetch("http://34.212.153.91:8082/addpost", {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+     
+  })
+  .then(response => response.text())
+
+  .then(response => {
+      console.log(response)
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+
+  
   }
