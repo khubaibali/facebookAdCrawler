@@ -34,23 +34,47 @@ let uniqueAds ={};    // Only Ads with distinct body
             return
           }
           if(!uniqueAds[item.snapshot.body.markup.__html]){
-            let imgUrl="No URL"
+            let Url="No URL"
             if(item.snapshot.cards.length>0){
-              imgUrl=item.snapshot.cards[0].original_image_url;
-              console.log("imgUrl------>",imgUrl);
-              uniqueAds[item.snapshot.body.markup.__html] = {count:0,sent:false,img:imgUrl}
+              Url=item.snapshot.cards[0].original_image_url;
+              console.log("imgUrl------>",Url);
+             // uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
             }
-            else{
-            uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,img:imgUrl}}
+            else if(item.snapshot.images.length>0){
+              Url=item.snapshot.images[0].original_image_url;
+              console.log("imgUrl------>",Url);
+              //uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
+
+            }
+            else if(item.snapshot.videos.length>0){
+              if(item.snapshot.videos[0].video_sd_url!=null)
+              Url=item.snapshot.videos[0].video_sd_url;   
+              else
+              Url=item.snapshot.videos[0].video_hd_url;
+              console.log("Video URL------>",Url);
+              //uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
+            }
+       
+            uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
+          
            //img:item.snapshot.cards[0].original_image_url
             // console.log("img--->",item.snapshot.cards)
             return
           }
 
           if(item.snapshot.cards.length>0){
-            uniqueAds[item.snapshot.body.markup.__html].img=item.snapshot.cards[0].original_image_url;
+            uniqueAds[item.snapshot.body.markup.__html].url=item.snapshot.cards[0].original_image_url;
           }
-            uniqueAds[item.snapshot.body.markup.__html].count = uniqueAds[item.snapshot.body.markup.__html].count +1
+          else if(item.snapshot.images.length>0){
+            uniqueAds[item.snapshot.body.markup.__html].url=item.snapshot.images[0].original_image_url;
+          }
+          else if(item.snapshot.videos.length>0){
+            if(item.snapshot.videos[0].video_sd_url!=null)
+            uniqueAds[item.snapshot.body.markup.__html].url=item.snapshot.videos[0].video_sd_url;   
+            else
+            uniqueAds[item.snapshot.body.markup.__html].url=item.snapshot.videos[0].video_hd_url;
+          }
+          uniqueAds[item.snapshot.body.markup.__html].count = uniqueAds[item.snapshot.body.markup.__html].count +1
             
             
 
@@ -61,10 +85,10 @@ let uniqueAds ={};    // Only Ads with distinct body
         // console.log('total ads ====>', adsCollection.length)
         // console.log("Unique Ads ====>",Object.keys(uniqueAds).length)
         for (const key in uniqueAds) {
-         
-
-          if(uniqueAds[key].count>2){
-            addpost({caption:key,url:uniqueAds[key].img});
+          if(uniqueAds[key].count>2 && !uniqueAds[key].sent)//yaha par count set hoga user k acc
+          {
+            addpost({caption:key,url:uniqueAds[key].url});
+            uniqueAds[key].sent=true;
           }
         }
         // uniqueAds.forEach((elem,index)=>{
