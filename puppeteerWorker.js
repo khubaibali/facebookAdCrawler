@@ -107,7 +107,7 @@ let uniqueAds ={};    // Only Ads with distinct body
     })
 
    
-    await page.goto(workerData.url);
+    await page.goto(workerData.facebookAdUrl);
     await page.setViewport({
         width: 1200,
         height: 800

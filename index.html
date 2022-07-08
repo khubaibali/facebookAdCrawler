@@ -2,36 +2,37 @@
 <html>
 
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>FaceBook Ad Crawler</title>
 </head>
 
 <body>
     <div>
         <div>
-            <button id="add-new-event">Add New Event</button>
+            <button class="btn btn-success m-3" id="add-new-event">Add New Event</button>
         </div>
-        <div id="all-events">
+        <div class="container" id="all-events">
             <div id="event">
                 <div>
-                    <button id="remove-btn">Remove</button>
+                    <button class="btn btn-danger" id="remove-btn">Remove</button>
                 </div>
                 <div>
-                    <label for="url-input">Enter Url</label>
-                    <textarea name="url-input" id="url-input" cols="100" rows="10"></textarea>
+                    <label class="form-label" for="url-input">Enter Url</label>
+                    <textarea class="form-control" name="url-input" id="url-input" cols="100" rows="10"></textarea>
                 </div>
                 <div>
-                    <label for="ad-counter">Counter</label>
-                    <input type="number" value="1" min="1">
+                    <label class="form-label" for="ad-counter">Counter</label>
+                    <input class="form-control" type="number" value="1" min="1">
                 </div>
                 <div>
-                    <label for="close-after">Close After Posts</label>
-                    <input type="number" value="1" min="1">
+                    <label class="form-label" for="close-after">Close After Posts</label>
+                    <input class="form-control" type="number" value="1" min="1">
                 </div>
             </div>
         </div>
     </div>
     <div>
-        <button id="start">Start</button>
+        <button class="btn btn-success m-3" id="start">Start</button>
     </div>
 
 </body>
@@ -49,13 +50,20 @@
     function addNewEvent(count) {
         let allEvents = document.getElementById("all-events")
         let temp = document.createElement('div')
-        temp.innerHTML = `<div> <button id="remove-btn-${count}">Remove</button></div><div><label for="url-input">Enter Url</label><textarea name="url-input" id="url-input" cols="100" rows="10"></textarea></div> <div>
-                    <label for="ad-counter">Counter</label>
-                    <input type="number" value="1" min="1">
+        temp.innerHTML = `<div>
+                    <button class="btn btn-danger" id="remove-btn-${count}"">Remove</button>
                 </div>
                 <div>
-                    <label for="close-after">Close After Posts</label>
-                    <input type="number" value="1" min="1">
+                    <label class="form-label" for="url-input">Enter Url</label>
+                    <textarea class="form-control" name="url-input" id="url-input" cols="100" rows="10"></textarea>
+                </div>
+                <div>
+                    <label class="form-label" for="ad-counter">Counter</label>
+                    <input class="form-control" type="number" value="1" min="1">
+                </div>
+                <div>
+                    <label class="form-label" for="close-after">Close After Posts</label>
+                    <input class="form-control" type="number" value="1" min="1">
                 </div>`
         temp.setAttribute('id', "event")
 
