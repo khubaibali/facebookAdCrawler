@@ -35,15 +35,14 @@ app.whenReady().then(() => {
   })
 })
 
-ipcMain.on('adUrls', function(e, adUrl){
-    console.log(adUrl)
+ipcMain.on('settings', function(e, addSettings){
+    console.log("allsettings",addSettings)
 
     //i will be the the workers count you want to create , Every worker will create new instance of puppeteer
-   
-    for(let i=0;i<adUrl.length;i++){
-        const worker = new Worker("./puppeteerWorker.js", {workerData: {facebookAdUrl:adUrl,repeatition:5 }});
-        
-    }
+
+    addSettings.forEach((item)=>{
+      const worker = new Worker("./puppeteerWorker.js", {workerData: {facebookAdUrl:item.url,repeatition:item.counter,closeAfter:item.closeAfter }});
+    })
     
     
   });

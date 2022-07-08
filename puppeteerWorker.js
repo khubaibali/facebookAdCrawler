@@ -4,12 +4,12 @@ const fetch =require('cross-fetch');
 const filer = require('fs');
 let adsCollection =[]; // All the Ads in This Collection
 let uniqueAds ={};    // Only Ads with distinct body
-
 //let exPath = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrmome.exe'
 
 (async () => {
-    const browser = await puppeteer.launch({headless:false});
-    const page = await browser.newPage();
+  const browser = await puppeteer.launch({headless:false});
+  const page = await browser.newPage();
+  console.log( 'singleWorkerData',workerData)
     page.on("response",async (response)=>{
         let ad=[]
         if(JSON.stringify(await response.url()).includes("https://www.facebook.com/ads/library/async/search_ads/")){
@@ -85,11 +85,14 @@ let uniqueAds ={};    // Only Ads with distinct body
         // console.log('total ads ====>', adsCollection.length)
         // console.log("Unique Ads ====>",Object.keys(uniqueAds).length)
         for (const key in uniqueAds) {
-          if(uniqueAds[key].count>2 && !uniqueAds[key].sent)//yaha par count set hoga user k acc
+          if(uniqueAds[key].count>workerData.counter && !uniqueAds[key].sent)//yaha par count set hoga user k acc
           {
             addpost({caption:key,url:uniqueAds[key].url});
             uniqueAds[key].sent=true;
           }
+        }
+        if(Object.keys(uniqueAds).length > workerData.closeAfter){
+          browser.close()
         }
         // uniqueAds.forEach((elem,index)=>{
         //   if(elem.count==5){
@@ -104,7 +107,7 @@ let uniqueAds ={};    // Only Ads with distinct body
     })
 
    
-    await page.goto('https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=ALL&q=free%20shipping&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=keyword_unordered&media_type=all');
+    await page.goto(workerData.url);
     await page.setViewport({
         width: 1200,
         height: 800
@@ -129,25 +132,7 @@ let uniqueAds ={};    // Only Ads with distinct body
   })();
 
 
-async function scrapeItems(
-    page,
-    extractItems,
-    itemCount,
-    scrollDelay = 800,
-  ) {
-    let items = [];
-    try {
-      let previousHeight;
-      while (items.length < itemCount) {
-        //items = await page.evaluate(extractItems);
-        previousHeight = await page.evaluate('document.body.scrollHeight');
-        await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-        await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
-        await page.waitForTimeout(scrollDelay);
-      }
-    } catch(e) { }
-    return items;
-  }
+
 
   function addpost(body) {
     fetch("http://34.212.153.91:8082/addpost", {
