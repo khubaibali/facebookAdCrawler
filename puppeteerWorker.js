@@ -5,7 +5,7 @@ const filer = require('fs');
 let adsCollection =[]; // All the Ads in This Collection
 let uniqueAds ={};    // Only Ads with distinct body
 //let exPath = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrmome.exe'
-
+let totalposts=0;
 (async () => {
   const browser = await puppeteer.launch({headless:false});
   const page = await browser.newPage();
@@ -37,12 +37,12 @@ let uniqueAds ={};    // Only Ads with distinct body
             let Url="No URL"
             if(item.snapshot.cards.length>0){
               Url=item.snapshot.cards[0].original_image_url;
-              console.log("imgUrl------>",Url);
+           //   console.log("imgUrl------>",Url);
              // uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
             }
             else if(item.snapshot.images.length>0){
               Url=item.snapshot.images[0].original_image_url;
-              console.log("imgUrl------>",Url);
+           //   console.log("imgUrl------>",Url);
               //uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
 
             }
@@ -51,7 +51,7 @@ let uniqueAds ={};    // Only Ads with distinct body
               Url=item.snapshot.videos[0].video_sd_url;   
               else
               Url=item.snapshot.videos[0].video_hd_url;
-              console.log("Video URL------>",Url);
+           //   console.log("Video URL------>",Url);
               //uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
             }
        
@@ -85,13 +85,17 @@ let uniqueAds ={};    // Only Ads with distinct body
         // console.log('total ads ====>', adsCollection.length)
         // console.log("Unique Ads ====>",Object.keys(uniqueAds).length)
         for (const key in uniqueAds) {
-          if(uniqueAds[key].count>workerData.counter && !uniqueAds[key].sent)//yaha par count set hoga user k acc
+         // console.log(uniqueAds[key]);
+        
+          if(uniqueAds[key].count>=workerData.repeatition && !uniqueAds[key].sent)//yaha par count set hoga user k acc
           {
             addpost({caption:key,url:uniqueAds[key].url});
             uniqueAds[key].sent=true;
+            totalposts++;
           }
         }
-        if(Object.keys(uniqueAds).length > workerData.closeAfter){
+
+        if(totalposts>= workerData.closeAfter){
           browser.close()
         }
         // uniqueAds.forEach((elem,index)=>{
