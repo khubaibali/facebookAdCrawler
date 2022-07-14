@@ -55,7 +55,7 @@ let totalposts=0;
               //uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
             }
        
-            uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url}
+            uniqueAds[item.snapshot.body.markup.__html] = {count:1,sent:false,url:Url,collationCount:item.collationCount,adUrl:`https://www.facebook.com/ads/library/?id=${parseInt(item.adArchiveID)}`}
           
            //img:item.snapshot.cards[0].original_image_url
             // console.log("img--->",item.snapshot.cards)
@@ -87,7 +87,7 @@ let totalposts=0;
         for (const key in uniqueAds) {
          // console.log(uniqueAds[key]);
         
-          if(uniqueAds[key].count>=workerData.repeatition && !uniqueAds[key].sent)//yaha par count set hoga user k acc
+          if(uniqueAds[key].collationCount>=workerData.repeatition && !uniqueAds[key].sent)//yaha par count set hoga user k acc
           {
             addpost({caption:key,url:uniqueAds[key].url});
             uniqueAds[key].sent=true;
